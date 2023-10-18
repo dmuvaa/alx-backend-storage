@@ -1,3 +1,4 @@
+-- delimiter
 DELIMITER //
 CREATE TRIGGER after_order_insert
 AFTER INSERT ON orders
