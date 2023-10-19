@@ -1,4 +1,4 @@
-- script that creates a stored procedure
+-- script that creates a stored procedure
 
 DELIMITER $$
 
