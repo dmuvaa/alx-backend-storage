@@ -1,0 +1,2 @@
+// script to show all MongoDb scripts
+show dbs
