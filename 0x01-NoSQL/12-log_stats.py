@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 
-"""get nginx logs"""
+"""import pymongo module"""
 
 from pymongo import MongoClient
 
 
-def get_log_stats():
-    """function that gets all log stats"""
+def log_stats():
+    """ log stats"""
     client = MongoClient('mongodb://localhost:27017')
 
     db = client.logs
@@ -30,4 +30,4 @@ def get_log_stats():
 
 
 if __name__ == "__main__":
-    get_log_stats()
+    log_stats()
