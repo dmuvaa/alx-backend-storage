@@ -1,2 +1,2 @@
 // script that deletes documents in a collection
-db.school.deleteMany({ $match : { name "Holberton school" }});
+db.school.deleteMany({ name : "Holberton school" });
