@@ -1,2 +1,4 @@
 // script that list all documents with matches
-db.school.find({name="Holberton school"})
+db.school.aggregate(
+[{$match : { name : "Holberton school"}}]
+);
