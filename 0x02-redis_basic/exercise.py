@@ -9,9 +9,11 @@ from typing import Union, Callable, Any, Optional
 
 
 """create a function"""
+
+
 def call_history(method: Callable) -> Callable:
     """Decorator that maintains the history of method calls in history"""
-    
+
     @functools.wraps(method)
     def wrapper(self, *args, **kwargs) -> Any:
         """function that increments the count in Redis for the given method"""
@@ -24,6 +26,7 @@ def call_history(method: Callable) -> Callable:
         self._redis.rpush(output_key, outputs)
         return outputs
     return wrapper
+
 
 def replay(method: Callable) -> None:
     """Display the history of calls of a particular function."""
