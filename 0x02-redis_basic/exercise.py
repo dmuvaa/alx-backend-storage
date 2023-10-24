@@ -38,7 +38,8 @@ def replay(method: Callable) -> None:
     print(f"{method.__qualname__} was called {len(inputs)} times:")
 
     for in_arg, out_arg in zip(inputs, outputs):
-        print(f"{method.__qualname__}(*{in_arg.decode('utf-8')}) -> {out_arg.decode('utf-8')}")
+        print(f"{method.__qualname__}(*{in_arg.decode('utf-8')}) ->
+                {out_arg.decode('utf-8')}")
 
 
 """Create a Class"""
@@ -58,7 +59,9 @@ class Cache:
         self._redis.set(key, data)
         return key
 
-    def get(self, key: str, fn: Optional[Callable] = None) -> Union[str, bytes, int, float, None]:
+    def get(self, key: str,
+            fn: Optional[Callable] = None) -> \
+            Union[str, bytes, int, float, None]:
         """method that take a key string argument and Callable argument"""
         value = self._redis.get(key)
         if value is None:
