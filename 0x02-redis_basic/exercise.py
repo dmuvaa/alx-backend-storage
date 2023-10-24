@@ -38,7 +38,7 @@ def replay(method: Callable) -> None:
     print(f"{method.__qualname__} was called {len(inputs)} times:")
 
     for in_arg, out_arg in zip(inputs, outputs):
-        print(f"{method.__qualname__}(*{in_arg.decode('utf-8')}) ->
+        print(f"{method.__qualname__}(*{in_arg.decode('utf-8')}) -> \
                 {out_arg.decode('utf-8')}")
 
 
