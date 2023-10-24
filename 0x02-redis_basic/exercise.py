@@ -5,19 +5,24 @@
 import functools
 import redis
 from uuid import uuid4
-from typing import Union, Callable, Optional, Any
+from typing import Union, Callable, Any, Optional
 
 
 """create a function"""
-def count_calls(method: Callable) -> Callable:
-    """counts the number of times the method is called"""
+def call_history(method: Callable) -> Callable:
+    """Decorator that maintains the history of method calls in history"""
     
     @functools.wraps(method)
     def wrapper(self, *args, **kwargs) -> Any:
         """function that increments the count in Redis for the given method"""
-        key = method.__qualname__
-        self._redis.incr(key)
-        return method(self, *args, **kwargs)
+        input_key = f"{method.__qualname__}:inputs"
+        output_key = f"{method.__qualname__}:outputs"
+
+        normalized_input = str(args)
+        self._redis.rpush(input_key, normalized_input)
+        outputs = method(self, *args, **kwargs)
+        self._redis.rpush(output_key, outputs)
+        return outputs
     return wrapper
 
 
@@ -31,7 +36,7 @@ class Cache:
         self._redis = redis.Redis()
         self._redis.flushdb()
 
-    @count_calls
+    @call_history
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """method that creates a store"""
         key = str(uuid4())
