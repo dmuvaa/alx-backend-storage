@@ -1,52 +1,34 @@
+#!/usr/bin/env python3
+"""Implementing an expiring web cache and tracker"""
+import redis
 import requests
 from functools import wraps
-from time import time
-
-cache_dict = {}
-url_count = {}
+from typing import Callable
 
 
-"""creates a function"""
+redis_store = redis.Redis()
+'''The module-level Redis instance.
+'''
 
 
-def cache(ttl=10):
-    """cache function"""
-    def decorator(func):
-        @wraps(func)
-        def wrapper(*args, **kwargs):
-            url = args[0]
-            current_time = time()
-
-            if url in cache_dict and (current_time - cache_dict[url]["time"]) <= ttl:
-                print(f"Fetching cached data for URL: {url}")
-                return cache_dict[url]["data"]
-
-            result = func(*args, **kwargs)
-            cache_dict[url] = {"data": result, "time": current_time}
-            return result
-        return wrapper
-    return decorator
+def wrapper(method: Callable) -> Callable:
+    """wrapper"""
+    @wraps(method)
+    def wrapped(url) -> str:
+        """wrapped"""
+        redis_store.incr(f'count:{url}')
+        result = redis_store.get(f'result:{url}')
+        if result:
+            return result.decode('utf-8')
+        result = method(url)
+        redis_store.set(f'count:{url}', 0)
+        redis_store.setex(f'result:{url}', 10, result)
+        return result
+    return wrapped
 
 
-def count_access(func):
-    """function that counts the number of times a url is accessed"""
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        url = args[0]
-        if f"count:{url}" in url_count:
-            url_count[f"count:{url}"] += 1
-        else:
-            url_count[f"count:{url}"] = 1
-
-        print(f"URL '{url}' accessed {url_count[f'count:{url}']} times.")
-        return func(*args, **kwargs)
-    return wrapper
-
-
-@count_access
-@cache(ttl=10)
+@wrapper
 def get_page(url: str) -> str:
-    """Fetches the HTML content of a URL."""
-    response = requests.get(url)
-    response.raise_for_status()
-    return response.text
+    """get_page"""
+    res = requests.get(url)
+    return res.text
