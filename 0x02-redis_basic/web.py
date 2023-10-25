@@ -50,9 +50,3 @@ def get_page(url: str) -> str:
     response = requests.get(url)
     response.raise_for_status()
     return response.text
-
-
-if __name__ == "__main__":
-    url = "http://slowwly.robertomurray.co.uk/delay/2000/url/http://www.google.com"
-    print(get_page(url))  # Should print the content and count
-    print(get_page(url))  # Should fetch from cache and update count
